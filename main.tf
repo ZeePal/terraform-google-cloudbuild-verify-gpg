@@ -19,24 +19,24 @@ resource "google_cloudbuild_trigger" "this" {
   dynamic "github" {
     for_each = var.github != null ? [var.github] : []
     content {
-      owner = lookup(github, "owner", null)
-      name  = lookup(github, "name", null)
+      owner = lookup(github.value, "owner", null)
+      name  = lookup(github.value, "name", null)
 
       dynamic "pull_request" {
-        for_each = lookup(github, "pull_request", null) != null ? [github["pull_request"]] : []
+        for_each = lookup(github.value, "pull_request", null) != null ? [github.value["pull_request"]] : []
         content {
-          branch          = lookup(pull_request, "branch", null)
-          comment_control = lookup(pull_request, "comment_control", null)
-          invert_regex    = lookup(pull_request, "invert_regex", null)
+          branch          = lookup(pull_request.value, "branch", null)
+          comment_control = lookup(pull_request.value, "comment_control", null)
+          invert_regex    = lookup(pull_request.value, "invert_regex", null)
         }
       }
 
       dynamic "push" {
-        for_each = lookup(github, "push", null) != null ? [github["push"]] : []
+        for_each = lookup(github.value, "push", null) != null ? [github.value["push"]] : []
         content {
-          invert_regex = lookup(push, "invert_regex", null)
-          branch       = lookup(push, "branch", null)
-          tag          = lookup(push, "tag", null)
+          invert_regex = lookup(push.value, "invert_regex", null)
+          branch       = lookup(push.value, "branch", null)
+          tag          = lookup(push.value, "tag", null)
         }
       }
     }
@@ -47,39 +47,39 @@ resource "google_cloudbuild_trigger" "this" {
     dynamic "step" {
       for_each = lookup(local.build_template, "steps", [])
       content {
-        name       = lookup(step, "name", null)
-        args       = lookup(step, "args", null)
-        env        = lookup(step, "env", null)
-        dir        = lookup(step, "dir", null)
-        entrypoint = lookup(step, "entrypoint", null)
-        id         = lookup(step, "id", null)
-        script     = lookup(step, "script", null)
-        secret_env = lookup(step, "secretEnv", null)
-        timeout    = lookup(step, "timeout", null)
+        name       = lookup(step.value, "name", null)
+        args       = lookup(step.value, "args", null)
+        env        = lookup(step.value, "env", null)
+        dir        = lookup(step.value, "dir", null)
+        entrypoint = lookup(step.value, "entrypoint", null)
+        id         = lookup(step.value, "id", null)
+        script     = lookup(step.value, "script", null)
+        secret_env = lookup(step.value, "secretEnv", null)
+        timeout    = lookup(step.value, "timeout", null)
 
         dynamic "volumes" {
-          for_each = lookup(step, "volumes", [])
+          for_each = lookup(step.value, "volumes", [])
           content {
 
-            name = lookup(volumes, "name", null)
-            path = lookup(volumes, "path", null)
+            name = lookup(volumes.value, "name", null)
+            path = lookup(volumes.value, "path", null)
           }
         }
 
-        wait_for = lookup(step, "waitFor", null)
+        wait_for = lookup(step.value, "waitFor", null)
       }
     }
 
     dynamic "artifacts" {
       for_each = lookup(local.build_template, "artifacts", [])
       content {
-        images = lookup(artifacts, "images", null)
+        images = lookup(artifacts.value, "images", null)
 
         dynamic "objects" {
-          for_each = lookup(artifacts, "objects", [])
+          for_each = lookup(artifacts.value, "objects", [])
           content {
-            location = lookup(objects, "location", null)
-            paths    = lookup(objects, "paths", null)
+            location = lookup(objects.value, "location", null)
+            paths    = lookup(objects.value, "paths", null)
           }
         }
       }
@@ -89,8 +89,8 @@ resource "google_cloudbuild_trigger" "this" {
       for_each = lookup(local.build_template, "availableSecrets", [])
       content {
         secret_manager {
-          env          = lookup(available_secrets["secretManager"], "env", null)
-          version_name = lookup(available_secrets["secretManager"], "versionName", null)
+          env          = lookup(available_secrets.value["secretManager"], "env", null)
+          version_name = lookup(available_secrets.value["secretManager"], "versionName", null)
         }
       }
     }
@@ -101,27 +101,27 @@ resource "google_cloudbuild_trigger" "this" {
     dynamic "options" {
       for_each = lookup(local.build_template, "options", [])
       content {
-        disk_size_gb            = lookup(options, "diskSizeGb", null)
-        dynamic_substitutions   = lookup(options, "dynamicSubstitutions", null)
-        env                     = lookup(options, "env", null)
-        log_streaming_option    = lookup(options, "logStreamingOption", null)
-        logging                 = lookup(options, "logging", null)
-        machine_type            = lookup(options, "machineType", null)
-        requested_verify_option = lookup(options, "requestedVerifyOption", null)
-        secret_env              = lookup(options, "secretEnv", null)
-        source_provenance_hash  = lookup(options, "sourceProvenanceHash", null)
-        substitution_option     = lookup(options, "substitutionOption", null)
+        disk_size_gb            = lookup(options.value, "diskSizeGb", null)
+        dynamic_substitutions   = lookup(options.value, "dynamicSubstitutions", null)
+        env                     = lookup(options.value, "env", null)
+        log_streaming_option    = lookup(options.value, "logStreamingOption", null)
+        logging                 = lookup(options.value, "logging", null)
+        machine_type            = lookup(options.value, "machineType", null)
+        requested_verify_option = lookup(options.value, "requestedVerifyOption", null)
+        secret_env              = lookup(options.value, "secretEnv", null)
+        source_provenance_hash  = lookup(options.value, "sourceProvenanceHash", null)
+        substitution_option     = lookup(options.value, "substitutionOption", null)
 
         dynamic "volumes" {
-          for_each = lookup(options, "volumes", [])
+          for_each = lookup(options.value, "volumes", [])
           content {
 
-            name = lookup(volumes, "name", null)
-            path = lookup(volumes, "path", null)
+            name = lookup(volumes.value, "name", null)
+            path = lookup(volumes.value, "path", null)
           }
         }
 
-        worker_pool = lookup(options, "workerPool", null)
+        worker_pool = lookup(options.value, "workerPool", null)
       }
     }
 
@@ -130,8 +130,8 @@ resource "google_cloudbuild_trigger" "this" {
     dynamic "secret" {
       for_each = lookup(local.build_template, "secrets", [])
       content {
-        kms_key_name = lookup(secret, "kmsKeyName", null)
-        secret_env   = lookup(secret, "secretEnv", null)
+        kms_key_name = lookup(secret.value, "kmsKeyName", null)
+        secret_env   = lookup(secret.value, "secretEnv", null)
       }
     }
 
@@ -139,25 +139,25 @@ resource "google_cloudbuild_trigger" "this" {
       for_each = lookup(local.build_template, "source", [])
       content {
         dynamic "repo_source" {
-          for_each = lookup(source, "repoSource", [])
+          for_each = lookup(source.value, "repoSource", [])
           content {
-            repo_name     = lookup(repo_source, "repoName", null)
-            branch_name   = lookup(repo_source, "branchName", null)
-            commit_sha    = lookup(repo_source, "commitSha", null)
-            dir           = lookup(repo_source, "dir", null)
-            invert_regex  = lookup(repo_source, "invertRegex", null)
-            project_id    = lookup(repo_source, "projectId", null)
-            substitutions = lookup(repo_source, "substitutions", null)
-            tag_name      = lookup(repo_source, "tagName", null)
+            repo_name     = lookup(repo_source.value, "repoName", null)
+            branch_name   = lookup(repo_source.value, "branchName", null)
+            commit_sha    = lookup(repo_source.value, "commitSha", null)
+            dir           = lookup(repo_source.value, "dir", null)
+            invert_regex  = lookup(repo_source.value, "invertRegex", null)
+            project_id    = lookup(repo_source.value, "projectId", null)
+            substitutions = lookup(repo_source.value, "substitutions", null)
+            tag_name      = lookup(repo_source.value, "tagName", null)
           }
         }
 
         dynamic "storage_source" {
-          for_each = lookup(source, "storageSource", [])
+          for_each = lookup(source.value, "storageSource", [])
           content {
-            bucket     = lookup(storage_source, "bucket", null)
-            object     = lookup(storage_source, "object", null)
-            generation = lookup(storage_source, "generation", null)
+            bucket     = lookup(storage_source.value, "bucket", null)
+            object     = lookup(storage_source.value, "object", null)
+            generation = lookup(storage_source.value, "generation", null)
           }
         }
       }

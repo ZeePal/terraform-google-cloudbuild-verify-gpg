@@ -10,10 +10,10 @@ ${var.signing_key}
 git verify-commit HEAD
 EOS
 
-  build_template = merge( # Start with source_build as a base & replace "Steps"
+  build_template = merge( # Start with source_build as a base & replace "steps"
     var.source_build_template,
     {
-      steps = concat( # Replace "Steps"
+      steps = concat( # Replace "steps"
         [
           { # Insert at the very beginning the 'git verify-commit HEAD' script
             id     = "git-gpg-verify"
