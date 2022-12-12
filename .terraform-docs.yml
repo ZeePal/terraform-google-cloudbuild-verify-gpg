@@ -1,0 +1,13 @@
+formatter: markdown
+output:
+  file: README.md
+
+sort:
+  by: required
+
+sections:
+  hide:
+    - providers
+
+settings:
+  hide-empty: true
